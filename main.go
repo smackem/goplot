@@ -1,21 +1,23 @@
 package main
 
-import "fmt"
-import "net/http"
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+)
 
 const (
 	port = 9090
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
-
 func main() {
-	fmt.Printf("Listening on port %d\n", port)
+	ep := Start(port)
 
-	pattern := fmt.Sprintf(":%d", port)
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("Running on port %d. Press Enter to quit...", port)
+	reader.ReadString('\n')
 
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(pattern, nil)
+	err := ep.Close()
+	log.Print(err)
 }
