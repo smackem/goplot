@@ -2,6 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Test package internal/calc",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceRoot}/internal/calc",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "env": {},
+            "args": [],
+            "showLog": true
+        },
+        {
             "name": "Launch",
             "type": "go",
             "request": "launch",
