@@ -17,11 +17,11 @@ const (
 	ttPlus
 	ttMinus
 	ttStar
-	ttStarStar
+	ttCaret
 	ttSlash
 	ttPercent
 	ttComma
-	ttEq
+	ttDotDot
 	ttLog
 	ttSqrt
 	ttSin
@@ -32,7 +32,9 @@ const (
 	ttAtan
 	ttNumber
 	ttIdent
-	ttLet
+	ttArrow
+	ttLBracket
+	ttRBracket
 	ttEOF
 )
 
@@ -98,13 +100,16 @@ var matchers = []matcher{
 	makeMatcher("^\\(", ttLParen),
 	makeMatcher("^\\)", ttRParen),
 	makeMatcher("^\\+", ttPlus),
+	makeMatcher("^\\-\\>", ttArrow),
 	makeMatcher("^\\-", ttMinus),
-	makeMatcher("^\\*\\*", ttStarStar),
+	makeMatcher("^\\^", ttCaret),
 	makeMatcher("^\\*", ttStar),
 	makeMatcher("^/", ttSlash),
 	makeMatcher("^%", ttPercent),
 	makeMatcher("^,", ttComma),
-	makeMatcher("^=", ttEq),
+	makeMatcher("^\\.\\.", ttDotDot),
+	makeMatcher("^\\[", ttLBracket),
+	makeMatcher("^\\]", ttRBracket),
 	makeMatcher("^log\\b", ttLog),
 	makeMatcher("^sqrt\\b", ttSqrt),
 	makeMatcher("^sin\\b", ttSin),
@@ -113,7 +118,6 @@ var matchers = []matcher{
 	makeMatcher("^asin\\b", ttAsin),
 	makeMatcher("^acos\\b", ttAcos),
 	makeMatcher("^atan\\b", ttAtan),
-	makeMatcher("^let\\b", ttLet),
 	makeMatcher("^[0-9]+(\\.[0-9]+)?\\b", ttNumber),
 	makeMatcher("^[a-zA-Z_][a-zA-Z0-9_]*\\b", ttIdent),
 }

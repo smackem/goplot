@@ -1,0 +1,36 @@
+start:
+    function
+
+function:
+    IDENTIFIER '[' NUMBER '..' NUMBER ']' '->' expr
+
+expr:
+    term
+
+term:
+    product '+' term
+    product '-' term
+    product
+
+product:
+    molecule '*' product
+    molecule '/' product
+    molecule '%' product
+    molecule 
+
+molecule:
+    atom '^' molecule
+    atom
+
+atom:
+    NUMBER
+    IDENTIFIER
+    '-' atom
+    'sqrt' atom
+    'sin' atom
+    'cos' atom
+    'tan' atom
+    'asin' atom
+    'acos' atom
+    'atan' atom
+    '(' expr ')'
