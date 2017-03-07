@@ -3,6 +3,7 @@ package calc
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -38,10 +39,22 @@ const (
 	ttEOF
 )
 
+var emptyToken = token{Type: ttEOF, Lexeme: ""}
+
 // token represents a lexed token
 type token struct {
 	Type   tokenType
 	Lexeme string
+}
+
+func (t token) parseNumber() Number {
+	if t.Type == ttNumber {
+		if number, err := strconv.ParseFloat(t.Lexeme, 64); err == nil {
+			return Number(number)
+		}
+	}
+
+	panic(fmt.Sprintf("Error converting %s to number", t.Lexeme))
 }
 
 // lex walks the specified string and returns an array of lexed Tokens
@@ -81,7 +94,7 @@ func match(src string) (token, int) {
 			return tok, loc[1]
 		}
 	}
-	return token{Type: ttEOF, Lexeme: ""}, -1
+	return emptyToken, -1
 }
 
 type matcher struct {

@@ -96,7 +96,7 @@ func Test_lex(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Expression",
+			name: "Function",
 			src:  "x[0..100] -> sin x * cos((x) ^ PI/4.0)",
 			want: []token{
 				token{Type: ttIdent, Lexeme: "x"},
