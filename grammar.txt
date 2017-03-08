@@ -20,6 +20,7 @@ product:
 
 molecule:
     atom '^' molecule
+    atom 'log' molecule
     atom
 
 atom:
