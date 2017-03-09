@@ -47,33 +47,29 @@ func (p *parser) parseFunction() (*Function, error) {
 		return nil, err
 	}
 
-	_, err = p.expect(ttLBracket)
+	if _, err = p.expect(ttLBracket); err != nil {
+		return nil, err
+	}
+
+	lower, err := p.parseExpr()
 	if err != nil {
 		return nil, err
 	}
 
-	lower, err := p.expect(ttNumber)
+	if _, err = p.expect(ttDotDot); err != nil {
+		return nil, err
+	}
+
+	upper, err := p.parseExpr()
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = p.expect(ttDotDot)
-	if err != nil {
+	if _, err = p.expect(ttRBracket); err != nil {
 		return nil, err
 	}
 
-	upper, err := p.expect(ttNumber)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = p.expect(ttRBracket)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = p.expect(ttArrow)
-	if err != nil {
+	if _, err = p.expect(ttArrow); err != nil {
 		return nil, err
 	}
 
@@ -85,10 +81,10 @@ func (p *parser) parseFunction() (*Function, error) {
 	p.assert(ttEOF)
 
 	return &Function{
-		param: ident.Lexeme,
-		lower: lower.parseNumber(),
-		upper: upper.parseNumber(),
-		expr:  expr,
+		Param: ident.Lexeme,
+		lower: lower,
+		upper: upper,
+		body:  expr,
 	}, nil
 }
 

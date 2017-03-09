@@ -2,7 +2,7 @@ start:
     function
 
 function:
-    IDENTIFIER '[' NUMBER '..' NUMBER ']' '->' expr
+    IDENTIFIER '[' expr '..' expr ']' '->' expr
 
 expr:
     term

@@ -38,8 +38,6 @@ func Start(port int) EndPoint {
 	return s
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 type httpServer struct {
 	srv          http.Server
 	closedSignal chan error

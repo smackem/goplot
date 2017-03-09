@@ -2,39 +2,6 @@ package calc
 
 import "math"
 
-type Number float64
-
-type Function struct {
-	param string
-	lower Number
-	upper Number
-	expr  Expr
-}
-
-func (f Function) Eval(ctx EvalContext, steps int) ([]Number, []Number) {
-	panic("unimplemented")
-}
-
-type Expr interface {
-	Eval(ctx EvalContext) Number
-}
-
-type EvalContext interface {
-	Get(ident string) Number
-}
-
-func ContextFrom(m map[string]Number) EvalContext {
-	return context(m)
-}
-
-// ============================================================================
-
-type context map[string]Number
-
-func (c context) Get(ident string) Number {
-	return c[ident]
-}
-
 type binaryExpr struct {
 	left  Expr
 	right Expr

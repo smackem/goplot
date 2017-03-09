@@ -33,10 +33,32 @@ func Test_parse(t *testing.T) {
 				token{Type: ttIdent, Lexeme: "x"},
 			}),
 			want: &Function{
-				param: "x",
-				lower: 0.0,
-				upper: 0.0,
-				expr:  identExpr{ident: "x"},
+				Param: "x",
+				lower: numberExpr{number: 0.0},
+				upper: numberExpr{number: 0.0},
+				body:  identExpr{ident: "x"},
+			},
+		},
+		{
+			name: "x[-100..5*2] -> x",
+			input: []token{
+				token{Type: ttIdent, Lexeme: "x"},
+				token{Type: ttLBracket, Lexeme: "["},
+				token{Type: ttMinus, Lexeme: "-"},
+				token{Type: ttNumber, Lexeme: "100"},
+				token{Type: ttDotDot, Lexeme: ".."},
+				token{Type: ttNumber, Lexeme: "5"},
+				token{Type: ttStar, Lexeme: "*"},
+				token{Type: ttNumber, Lexeme: "2"},
+				token{Type: ttRBracket, Lexeme: "]"},
+				token{Type: ttArrow, Lexeme: "->"},
+				token{Type: ttIdent, Lexeme: "x"},
+			},
+			want: &Function{
+				Param: "x",
+				lower: negateExpr{inner: numberExpr{number: 100}},
+				upper: timesExpr{left: numberExpr{number: 5}, right: numberExpr{number: 2}},
+				body:  identExpr{ident: "x"},
 			},
 		},
 		{
@@ -47,10 +69,10 @@ func Test_parse(t *testing.T) {
 				token{Type: ttNumber, Lexeme: "1"},
 			}),
 			want: &Function{
-				param: "y",
-				lower: 1,
-				upper: 100,
-				expr:  addExpr{left: identExpr{ident: "y"}, right: numberExpr{number: 1.0}},
+				Param: "y",
+				lower: numberExpr{number: 1},
+				upper: numberExpr{number: 100},
+				body:  addExpr{left: identExpr{ident: "y"}, right: numberExpr{number: 1.0}},
 			},
 		},
 		{
@@ -73,10 +95,10 @@ func Test_parse(t *testing.T) {
 				token{Type: ttIdent, Lexeme: "x"},
 			}),
 			want: &Function{
-				param: "x",
-				lower: 1,
-				upper: 100,
-				expr: addExpr{
+				Param: "x",
+				lower: numberExpr{number: 1},
+				upper: numberExpr{number: 100},
+				body: addExpr{
 					left: timesExpr{
 						left:  identExpr{ident: "x"},
 						right: minusExpr{left: identExpr{ident: "x"}, right: numberExpr{number: 1}},
