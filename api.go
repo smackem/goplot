@@ -7,16 +7,17 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 
-	"net/url"
-
 	"github.com/smackem/goplot/internal/calc"
+	"github.com/smackem/goplot/internal/graph"
 )
 
 func registerAPI() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/eval", evalHandler)
+	http.HandleFunc("/draw", drawHandler)
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,11 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	body := string(bytes)
 	fmt.Fprintf(w, "Got '%s'!\n", html.EscapeString(body))
+}
+
+func drawHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "image/png")
+	graph.DrawPng(w)
 }
 
 func evalHandler(w http.ResponseWriter, r *http.Request) {
