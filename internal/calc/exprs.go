@@ -58,56 +58,56 @@ type unaryExpr struct {
 type negateExpr unaryExpr
 
 func (x negateExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(-inner)
 }
 
 type sqrtExpr unaryExpr
 
 func (x sqrtExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Sqrt(inner))
 }
 
 type sinExpr unaryExpr
 
 func (x sinExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Sin(inner))
 }
 
 type cosExpr unaryExpr
 
 func (x cosExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Cos(inner))
 }
 
 type tanExpr unaryExpr
 
 func (x tanExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Tan(inner))
 }
 
 type asinExpr unaryExpr
 
 func (x asinExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Asin(inner))
 }
 
 type acosExpr unaryExpr
 
 func (x acosExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Acos(inner))
 }
 
 type atanExpr unaryExpr
 
 func (x atanExpr) Eval(ctx EvalContext) Number {
-	inner := float64(x.Eval(ctx))
+	inner := float64(x.inner.Eval(ctx))
 	return Number(math.Atan(inner))
 }
 

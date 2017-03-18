@@ -1,6 +1,9 @@
 package calc
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func Test_Expr_Eval(t *testing.T) {
 	tests := []struct {
@@ -41,6 +44,30 @@ func Test_Expr_Eval(t *testing.T) {
 			},
 			ctx:  contextWith("y", 25),
 			want: 250,
+		},
+		{
+			name: "sqrtExpr",
+			expr: sqrtExpr{inner: identExpr{ident: "x"}},
+			ctx:  contextWith("x", 25),
+			want: 5,
+		},
+		{
+			name: "sinExpr",
+			expr: sinExpr{inner: identExpr{ident: "x"}},
+			ctx:  contextWith("x", math.Pi/2),
+			want: 1,
+		},
+		{
+			name: "cosExpr",
+			expr: cosExpr{inner: identExpr{ident: "x"}},
+			ctx:  contextWith("x", math.Pi),
+			want: -1,
+		},
+		{
+			name: "tanExpr",
+			expr: tanExpr{inner: identExpr{ident: "x"}},
+			ctx:  contextWith("x", 0),
+			want: 0,
 		},
 	}
 	for _, tt := range tests {

@@ -18,6 +18,7 @@ func registerAPI() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/eval", evalHandler)
 	http.HandleFunc("/draw", drawHandler)
+	http.HandleFunc("/plot", plotHandler)
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,24 +36,21 @@ func drawHandler(w http.ResponseWriter, r *http.Request) {
 	graph.DrawPng(w)
 }
 
+func plotHandler(w http.ResponseWriter, r *http.Request) {
+	f, steps, err := readFunction(w, r)
+	if err != nil {
+		return
+	}
+
+	xs, ys := f.Eval(steps)
+
+	w.Header().Set("Content-type", "image/png")
+	graph.PlotPng(xs, ys, w)
+}
+
 func evalHandler(w http.ResponseWriter, r *http.Request) {
-	uri, err := url.ParseRequestURI(r.RequestURI)
+	f, steps, err := readFunction(w, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	steps, err := strconv.Atoi(uri.Query().Get("steps"))
-	if err != nil {
-		steps = 10
-	}
-	bytes, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	f, err := calc.Parse(string(bytes))
-	if err != nil {
-		http.NotFound(w, r)
 		return
 	}
 
@@ -62,7 +60,28 @@ func evalHandler(w http.ResponseWriter, r *http.Request) {
 	result := struct {
 		Xs []calc.Number
 		Ys []calc.Number
-	}{Xs: xs, Ys: ys}
-	enc := json.NewEncoder(w)
-	enc.Encode(result)
+	}{xs, ys}
+	json.NewEncoder(w).Encode(result)
+}
+
+func readFunction(w http.ResponseWriter, r *http.Request) (f *calc.Function, steps int, err error) {
+	uri, err := url.ParseRequestURI(r.RequestURI)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	steps, err = strconv.Atoi(uri.Query().Get("steps"))
+	if err != nil {
+		steps = 10
+	}
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	f, err = calc.Parse(string(bytes))
+	if err != nil {
+		http.NotFound(w, r)
+	}
+	return
 }
