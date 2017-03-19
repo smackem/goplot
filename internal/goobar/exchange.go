@@ -25,7 +25,7 @@ func (x *Exchange) GetId() (int, bool) {
 func (x *Exchange) MustGetId() int {
 	id, err := strconv.Atoi(x.id)
 	if err != nil {
-		panic("id not present or in the wrong format")
+		x.doPanic("id not present or in the wrong format")
 	}
 	return id
 }
@@ -54,7 +54,7 @@ func (x *Exchange) MustGetInt(key string) int {
 	s := x.r.FormValue(key)
 	val, err := strconv.Atoi(s)
 	if err != nil {
-		panic(fmt.Sprintf("Value %s not present or not an integer", key))
+		x.doPanic(fmt.Sprintf("Value %s not present or not an integer", key))
 	}
 	return val
 }
@@ -66,7 +66,7 @@ func (x *Exchange) GetString(key string) string {
 func (x *Exchange) MustGetString(key string) string {
 	s := x.r.FormValue(key)
 	if s == "" {
-		panic(fmt.Sprintf("Value %s not present", key))
+		x.doPanic(fmt.Sprintf("Value %s not present", key))
 	}
 	return s
 }
@@ -81,7 +81,7 @@ func (x *Exchange) MustGetFloat(key string) float64 {
 	s := x.r.FormValue(key)
 	val, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		panic(fmt.Sprintf("Value %s not present or not a float", key))
+		x.doPanic(fmt.Sprintf("Value %s not present or not a float", key))
 	}
 	return val
 }
@@ -96,12 +96,20 @@ func (x *Exchange) MustGetBool(key string) bool {
 	s := x.r.FormValue(key)
 	val, err := strconv.ParseBool(s)
 	if err != nil {
-		panic(fmt.Sprintf("Value %s not present or not a boolean", key))
+		x.doPanic(fmt.Sprintf("Value %s not present or not a boolean", key))
 	}
 	return val
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+type actionPanic struct {
+	msg string
+}
+
+func (x *Exchange) doPanic(msg string) {
+	panic(actionPanic{msg: msg})
+}
 
 func makeExchange(w http.ResponseWriter, r *http.Request) Exchange {
 	_, id := path.Split(r.URL.Path)
