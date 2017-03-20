@@ -2,6 +2,7 @@ package goobar
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"io"
 )
 
@@ -44,11 +45,40 @@ func (r plainTextResponder) ContentType() string {
 	return "text/plain; charset=utf-8"
 }
 
+func XML(v interface{}) Responder {
+	return &xmlResponder{v}
+}
+
+type xmlResponder struct {
+	value interface{}
+}
+
+func (r xmlResponder) Respond(writer io.Writer) error {
+	return xml.NewEncoder(writer).Encode(r.value)
+}
+
+func (r xmlResponder) ContentType() string {
+	return "text/xml; charset=utf-8"
+}
+
+var nop = nopResponder{}
+
+func Nop() Responder {
+	return &nop
+}
+
+type nopResponder struct{}
+
+func (r nopResponder) Respond(writer io.Writer) error {
+	return nil
+}
+
+func (r nopResponder) ContentType() string {
+	return ""
+}
+
 // func View(path string) Responder {
 // }
 
-// func XML(v interface{}) Responder {
-// }
-
-// func Noop() Responder {
+// func ImagePNG(img image.Image) Responder {
 // }
