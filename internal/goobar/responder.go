@@ -3,6 +3,8 @@ package goobar
 import (
 	"encoding/json"
 	"encoding/xml"
+	"image"
+	"image/png"
 	"io"
 )
 
@@ -77,8 +79,38 @@ func (r nopResponder) ContentType() string {
 	return ""
 }
 
-// func View(path string) Responder {
-// }
+func ImagePNG(img image.Image) Responder {
+	return &pngResponder{img}
+}
 
-// func ImagePNG(img image.Image) Responder {
+type pngResponder struct {
+	img image.Image
+}
+
+func (r pngResponder) Respond(writer io.Writer) error {
+	return png.Encode(writer, r.img)
+}
+
+func (r pngResponder) ContentType() string {
+	return "image/png"
+}
+
+func Binary(reader io.Reader) Responder {
+	return &binaryResponder{reader}
+}
+
+type binaryResponder struct {
+	reader io.Reader
+}
+
+func (r binaryResponder) Respond(writer io.Writer) error {
+	_, err := io.Copy(writer, r.reader)
+	return err
+}
+
+func (r binaryResponder) ContentType() string {
+	return "application/octet-stream"
+}
+
+// func View(path string) Responder {
 // }
