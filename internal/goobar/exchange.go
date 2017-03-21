@@ -108,7 +108,7 @@ type actionPanic struct {
 }
 
 func (x *Exchange) doPanic(msg string) {
-	panic(actionPanic{msg: msg})
+	panic(actionPanic{msg})
 }
 
 func makeExchange(w http.ResponseWriter, r *http.Request) Exchange {

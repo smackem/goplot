@@ -3,9 +3,11 @@ package goobar
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"image"
 	"image/png"
 	"io"
+	"net/http"
 )
 
 type Responder interface {
@@ -110,6 +112,28 @@ func (r binaryResponder) Respond(writer io.Writer) error {
 
 func (r binaryResponder) ContentType() string {
 	return "application/octet-stream"
+}
+
+func Error(statusCode int, message string) Responder {
+	return &errorResponder{statusCode, message}
+}
+
+type errorResponder struct {
+	statusCode int
+	message    string
+}
+
+func (r errorResponder) Respond(writer io.Writer) error {
+	if w, ok := writer.(http.ResponseWriter); ok {
+		http.Error(w, r.message, r.statusCode)
+		return nil
+	}
+	_, err := fmt.Fprintf(writer, "Error %d: %s", r.statusCode, r.message)
+	return err
+}
+
+func (r errorResponder) ContentType() string {
+	return "text/plain"
 }
 
 // func View(path string) Responder {
