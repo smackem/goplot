@@ -4,15 +4,13 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"image/png"
-	"io"
 	"math"
 
 	"github.com/llgcode/draw2d/draw2dimg"
 	"github.com/smackem/goplot/internal/calc"
 )
 
-func DrawPng(w io.Writer) {
+func DrawPng() image.Image {
 	// Initialize the graphic context on an RGBA image
 	dest := image.NewRGBA(image.Rect(0, 0, 297, 210.0))
 	gc := draw2dimg.NewGraphicContext(dest)
@@ -29,10 +27,10 @@ func DrawPng(w io.Writer) {
 	gc.Close()
 	gc.FillStroke()
 
-	png.Encode(w, dest)
+	return dest
 }
 
-func PlotPng(xs []calc.Number, ys []calc.Number, w io.Writer) {
+func PlotPng(xs []calc.Number, ys []calc.Number) image.Image {
 	if len(xs) <= 0 || len(xs) != len(ys) {
 		panic("xs and ys must be of equal length, both greater than zero")
 	}
@@ -72,7 +70,7 @@ func PlotPng(xs []calc.Number, ys []calc.Number, w io.Writer) {
 	}
 	gc.Stroke()
 
-	png.Encode(w, dest)
+	return dest
 }
 
 func minmax(slice []calc.Number) (min float64, max float64) {
