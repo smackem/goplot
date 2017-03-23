@@ -17,12 +17,12 @@ func (x Exchange) Request() *http.Request {
 	return x.r
 }
 
-func (x *Exchange) GetId() (int, bool) {
+func (x *Exchange) GetID() (int, bool) {
 	id, err := strconv.Atoi(x.id)
 	return id, err == nil
 }
 
-func (x *Exchange) MustGetId() int {
+func (x *Exchange) MustGetID() int {
 	id, err := strconv.Atoi(x.id)
 	if err != nil {
 		x.doPanic("id not present or in the wrong format")
@@ -30,11 +30,11 @@ func (x *Exchange) MustGetId() int {
 	return id
 }
 
-func (x *Exchange) GetIdString() string {
+func (x *Exchange) GetIDString() string {
 	return x.id
 }
 
-func (x *Exchange) MustGetIdString() string {
+func (x *Exchange) MustGetIDString() string {
 	if x.id == "" {
 		panic("id not present")
 	}
@@ -59,6 +59,13 @@ func (x *Exchange) MustGetInt(key string) int {
 	return val
 }
 
+func (x *Exchange) GetIntOrDefault(key string, defaultVal int) int {
+	if val, ok := x.GetInt(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
 func (x *Exchange) GetString(key string) string {
 	return x.r.FormValue(key)
 }
@@ -69,6 +76,13 @@ func (x *Exchange) MustGetString(key string) string {
 		x.doPanic(fmt.Sprintf("Value %s not present", key))
 	}
 	return s
+}
+
+func (x *Exchange) GetStringOrDefault(key string, defaultVal string) string {
+	if val := x.GetString(key); val != "" {
+		return val
+	}
+	return defaultVal
 }
 
 func (x *Exchange) GetFloat(key string) (float64, bool) {
@@ -86,6 +100,13 @@ func (x *Exchange) MustGetFloat(key string) float64 {
 	return val
 }
 
+func (x *Exchange) GetFloatOrDefault(key string, defaultVal float64) float64 {
+	if val, ok := x.GetFloat(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
 func (x *Exchange) GetBool(key string) (bool, bool) {
 	s := x.r.FormValue(key)
 	val, err := strconv.ParseBool(s)
@@ -99,6 +120,13 @@ func (x *Exchange) MustGetBool(key string) bool {
 		x.doPanic(fmt.Sprintf("Value %s not present or not a boolean", key))
 	}
 	return val
+}
+
+func (x *Exchange) GetBoolOrDefault(key string, defaultVal bool) bool {
+	if val, ok := x.GetBool(key); ok {
+		return val
+	}
+	return defaultVal
 }
 
 ///////////////////////////////////////////////////////////////////////////////
