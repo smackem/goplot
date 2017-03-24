@@ -3,6 +3,7 @@ package goobar
 import "net/http"
 import "log"
 import "strings"
+import "net/url"
 
 type Action func(x Exchange) Responder
 
@@ -26,7 +27,8 @@ func recoverFromActionPanic(w http.ResponseWriter, r *http.Request) {
 	switch x := recover(); p := x.(type) {
 	case nil: // nothing thrown, ignore
 	case actionPanic:
-		log.Println(p.msg)
+		u, _ := url.QueryUnescape(r.URL.String())
+		log.Printf("%s: %s", u, p.msg)
 		http.NotFound(w, r)
 	default:
 		panic(x) // rethrow

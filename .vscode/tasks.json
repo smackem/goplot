@@ -4,6 +4,24 @@
     "version": "0.1.0",
     "command": "go",
     "isShellCommand": true,
-    "args": ["build", "-v"],
-    "showOutput": "always"
+    "showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": ["-v"]
+        },
+        {
+            "taskName": "clean",
+            "args": ["-v"]
+        },
+        {
+            "taskName": "rebuild",
+            "suppressTaskName": true,
+            "args": ["build", "-v", "-a"]
+        },
+        {
+            "taskName": "test",
+            "args": ["./..."]
+        }
+    ]
 }
