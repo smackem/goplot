@@ -37,9 +37,11 @@ func plotAction(x goobar.Exchange) goobar.Responder {
 		return goobar.Error(400, err.Error())
 	}
 	steps := x.GetIntOrDefault("steps", 10)
+	minY := x.GetFloatOrDefault("miny", 0)
+	maxY := x.GetFloatOrDefault("maxy", 0)
 
 	xs, ys := f.Eval(steps)
-	return goobar.ImagePNG(graph.PlotPng(xs, ys))
+	return goobar.ImagePNG(graph.PlotPng(xs, ys, minY, maxY))
 }
 
 func evalAction(x goobar.Exchange) goobar.Responder {

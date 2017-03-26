@@ -1,30 +1,36 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Print("USAGE: go run main.go URL FUNCTION")
+	var steps int
+	var minY float64
+	var maxY float64
+
+	flag.IntVar(&steps, "steps", 1000, "Horizontal resolution.")
+	flag.Float64Var(&minY, "miny", 0, "Lower Y bound. Defaults to minimum value in function results.")
+	flag.Float64Var(&maxY, "maxy", 0, "Upper Y bound. Defaults to maximum value in function results.")
+
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) < 2 {
+		fmt.Printf("%s [OPTIONS] URL FUNCTION\nOPTIONS:\n", os.Args[0])
+		flag.PrintDefaults()
 		return
 	}
 
-	urlstr := os.Args[1]
-	fsrc := url.QueryEscape(os.Args[2])
+	urlstr := args[0]
+	fsrc := url.QueryEscape(args[1])
 
-	if strings.Contains(urlstr, "?") {
-		urlstr += "&"
-	} else {
-		urlstr += "?"
-	}
-
-	urlstr += "f=" + fsrc
+	urlstr = fmt.Sprintf("%s?f=%s&steps=%d&miny=%g&maxy=%g", urlstr, fsrc, steps, minY, maxY)
 	fmt.Fprintf(os.Stderr, "> GET %s\n", urlstr)
 
 	resp, err := http.Get(urlstr)
@@ -34,16 +40,14 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return
-	}
-
 	fmt.Fprintf(os.Stderr, "< %s %s\n", resp.Proto, resp.Status)
 	for key, val := range resp.Header {
 		fmt.Fprintf(os.Stderr, "< %s: %s\n", key, val)
 	}
 
-	os.Stdout.Write(b)
+	count, err := io.Copy(os.Stdout, resp.Body)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+	fmt.Fprintf(os.Stderr, "%d bytes read\n", count)
 }
