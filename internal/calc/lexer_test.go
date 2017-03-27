@@ -38,7 +38,7 @@ func Test_lex(t *testing.T) {
 		},
 		{
 			name: "All Operators With Whitespace",
-			src:  "( ) + - * ^ / % , .. -> [ ]",
+			src:  "( ) + - * ^ / % , : -> [ ]",
 			want: []token{
 				token{Type: ttLParen, Lexeme: "("},
 				token{Type: ttRParen, Lexeme: ")"},
@@ -49,7 +49,7 @@ func Test_lex(t *testing.T) {
 				token{Type: ttSlash, Lexeme: "/"},
 				token{Type: ttPercent, Lexeme: "%"},
 				token{Type: ttComma, Lexeme: ","},
-				token{Type: ttDotDot, Lexeme: ".."},
+				token{Type: ttColon, Lexeme: ":"},
 				token{Type: ttArrow, Lexeme: "->"},
 				token{Type: ttLBracket, Lexeme: "["},
 				token{Type: ttRBracket, Lexeme: "]"},
@@ -97,12 +97,12 @@ func Test_lex(t *testing.T) {
 		},
 		{
 			name: "Function",
-			src:  "x[0..100] -> sin x * cos((x) ^ PI/4.0)",
+			src:  "x[0:100] -> sin x * cos((x) ^ PI/4.0)",
 			want: []token{
 				token{Type: ttIdent, Lexeme: "x"},
 				token{Type: ttLBracket, Lexeme: "["},
 				token{Type: ttNumber, Lexeme: "0"},
-				token{Type: ttDotDot, Lexeme: ".."},
+				token{Type: ttColon, Lexeme: ":"},
 				token{Type: ttNumber, Lexeme: "100"},
 				token{Type: ttRBracket, Lexeme: "]"},
 				token{Type: ttArrow, Lexeme: "->"},

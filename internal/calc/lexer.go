@@ -22,7 +22,7 @@ const (
 	ttSlash
 	ttPercent
 	ttComma
-	ttDotDot
+	ttColon
 	ttLog
 	ttSqrt
 	ttSin
@@ -120,7 +120,7 @@ var matchers = []matcher{
 	makeMatcher(`^/`, ttSlash),
 	makeMatcher(`^%`, ttPercent),
 	makeMatcher(`^,`, ttComma),
-	makeMatcher(`^\.\.`, ttDotDot),
+	makeMatcher(`^\:`, ttColon),
 	makeMatcher(`^\[`, ttLBracket),
 	makeMatcher(`^\]`, ttRBracket),
 	makeMatcher(`^log\b`, ttLog),

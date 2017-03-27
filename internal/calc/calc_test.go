@@ -14,7 +14,7 @@ func TestFunction_Eval(t *testing.T) {
 		wantYs []Number
 	}{
 		{
-			name: "x[1..11]->x",
+			name: "x[1:11]->x",
 			f: Function{
 				Param: "x",
 				lower: numberExpr{number: 1},
@@ -26,7 +26,7 @@ func TestFunction_Eval(t *testing.T) {
 			wantYs: []Number{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
 		},
 		{
-			name: "x[0..4]->x*2",
+			name: "x[0:4]->x*2",
 			f: Function{
 				Param: "x",
 				lower: numberExpr{number: 0},
@@ -38,7 +38,7 @@ func TestFunction_Eval(t *testing.T) {
 			wantYs: []Number{0, 2, 4, 6},
 		},
 		{
-			name: "x[0..0]->x",
+			name: "x[0:0]->x",
 			f: Function{
 				Param: "x",
 				lower: numberExpr{number: 0},
@@ -50,7 +50,7 @@ func TestFunction_Eval(t *testing.T) {
 			wantYs: []Number{0, 0, 0},
 		},
 		{
-			name: "x[0..1]->x",
+			name: "x[0:1]->x",
 			f: Function{
 				Param: "x",
 				lower: numberExpr{number: 0},
@@ -83,8 +83,8 @@ func TestParse(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "x[0..10]->x",
-			src:  "x[0..10]->x",
+			name: "x[0:10]->x",
+			src:  "x[0:10]->x",
 			want: &Function{
 				Param: "x",
 				lower: numberExpr{number: 0},

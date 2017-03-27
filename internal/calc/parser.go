@@ -56,7 +56,7 @@ func (p *parser) parseFunction() (*Function, error) {
 		return nil, err
 	}
 
-	if _, err = p.expect(ttDotDot); err != nil {
+	if _, err = p.expect(ttColon); err != nil {
 		return nil, err
 	}
 

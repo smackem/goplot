@@ -5,14 +5,18 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"math"
-
 	"log"
+	"math"
+	"path/filepath"
 
 	"github.com/llgcode/draw2d"
 	"github.com/llgcode/draw2d/draw2dimg"
 	"github.com/smackem/goplot/internal/calc"
 )
+
+func init() {
+	draw2d.SetFontFolder(filepath.FromSlash("resource/font"))
+}
 
 func DrawPng() image.Image {
 	// Initialize the graphic context on an RGBA image
@@ -47,7 +51,7 @@ func PlotPng(xs []calc.Number, ys []calc.Number, minY, maxY float64) image.Image
 	ratioX := float64(bounds.Dx()) / float64(maxX-minX)
 	ratioY := float64(bounds.Dy()) / float64(maxY-minY)
 
-	log.Printf("PlotPng: x=%g..%g y=%g..%g ratio=%g,%g\n", minX, maxX, minY, maxY, ratioX, ratioY)
+	log.Printf("PlotPng: x=%g:%g y=%g:%g ratio=%g,%g\n", minX, maxX, minY, maxY, ratioX, ratioY)
 
 	dest := image.NewRGBA(bounds)
 	gc := draw2dimg.NewGraphicContext(dest)
@@ -70,13 +74,26 @@ func PlotPng(xs []calc.Number, ys []calc.Number, minY, maxY float64) image.Image
 	gc.LineTo(0, -maxY*ratioY)
 	gc.Stroke()
 
-	maxXStr := fmt.Sprintf("%g", maxX)
-	gc.SetFontData(draw2d.FontData{Name: "luxi", Family: draw2d.FontFamilyMono})
-	gc.SetFontSize(12)
+	// draw axis labels
+	gc.SetFontData(draw2d.FontData{Name: "luxi", Family: draw2d.FontFamilySans, Style: draw2d.FontStyleBold})
+	gc.SetFontSize(10)
 	gc.SetFillColor(color.RGBA{0xc0, 0xc0, 0xc0, 0xff})
-	l, t, r, b := gc.GetStringBounds(maxXStr)
-	log.Printf("l=%g, t=%g, r=%g, b=%g", l, t, r, b)
-	gc.FillStringAt(maxXStr, maxX*ratioX-(r-l), 0)
+
+	maxXStr := fmt.Sprintf("%.2f", maxX)
+	left, top, right, bottom := gc.GetStringBounds(maxXStr)
+	gc.FillStringAt(maxXStr, maxX*ratioX-(right-left)-1, bottom-top+1)
+
+	minXStr := fmt.Sprintf("%.2f", minX)
+	left, top, right, bottom = gc.GetStringBounds(minXStr)
+	gc.FillStringAt(minXStr, minX*ratioX+1, bottom-top+1)
+
+	maxYStr := fmt.Sprintf("%.2f", maxY)
+	left, top, right, bottom = gc.GetStringBounds(maxYStr)
+	gc.FillStringAt(maxYStr, 1, -maxY*ratioY+(bottom-top)+1)
+
+	minYStr := fmt.Sprintf("%.2f", minY)
+	left, top, right, bottom = gc.GetStringBounds(minYStr)
+	gc.FillStringAt(minYStr, 1, -minY*ratioY-2)
 
 	// draw curve
 	gc.SetLineWidth(3)
@@ -89,6 +106,11 @@ func PlotPng(xs []calc.Number, ys []calc.Number, minY, maxY float64) image.Image
 	gc.Stroke()
 
 	return dest
+}
+
+func fillRect(dest draw.Image, x, y, width, height float64, rgb color.Color) {
+	rect := image.Rect(int(x+0.5), int(y+0.5), int(x+width+0.5), int(y+height+0.5))
+	draw.Draw(dest, rect, image.NewUniform(rgb), image.ZP, draw.Over)
 }
 
 func minMax(numbers []calc.Number) (min float64, max float64) {

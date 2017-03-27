@@ -14,7 +14,7 @@ func main() {
 	var minY float64
 	var maxY float64
 
-	flag.IntVar(&steps, "steps", 1000, "Horizontal resolution.")
+	flag.IntVar(&steps, "steps", 800, "Horizontal resolution. Default equals pixel width of returned image.")
 	flag.Float64Var(&minY, "miny", 0, "Lower Y bound. Defaults to minimum value in function results.")
 	flag.Float64Var(&maxY, "maxy", 0, "Upper Y bound. Defaults to maximum value in function results.")
 
@@ -22,18 +22,18 @@ func main() {
 	args := flag.Args()
 
 	if len(args) < 2 {
-		fmt.Printf("%s [OPTIONS] URL FUNCTION\nOPTIONS:\n", os.Args[0])
+		fmt.Printf("Usage:\n%s [OPTIONS] HOSTNAME:PORT FUNCTION\nOPTIONS:\n", os.Args[0])
 		flag.PrintDefaults()
 		return
 	}
 
-	urlstr := args[0]
-	fsrc := url.QueryEscape(args[1])
+	address := args[0]
+	fsrc := args[1]
 
-	urlstr = fmt.Sprintf("%s?f=%s&steps=%d&miny=%g&maxy=%g", urlstr, fsrc, steps, minY, maxY)
-	fmt.Fprintf(os.Stderr, "> GET %s\n", urlstr)
+	uri := fmt.Sprintf("http://%s/plot?f=%s&steps=%d&miny=%g&maxy=%g", address, url.QueryEscape(fsrc), steps, minY, maxY)
+	fmt.Fprintf(os.Stderr, "> GET %s\n", uri)
 
-	resp, err := http.Get(urlstr)
+	resp, err := http.Get(uri)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return

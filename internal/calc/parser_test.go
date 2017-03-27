@@ -12,7 +12,7 @@ func makeFunction(param string, lower Number, upper Number, exprTokens []token) 
 		token{Type: ttIdent, Lexeme: param},
 		token{Type: ttLBracket, Lexeme: "["},
 		token{Type: ttNumber, Lexeme: fmt.Sprintf("%f", lower)},
-		token{Type: ttDotDot, Lexeme: ".."},
+		token{Type: ttColon, Lexeme: ":"},
 		token{Type: ttNumber, Lexeme: fmt.Sprintf("%f", upper)},
 		token{Type: ttRBracket, Lexeme: "]"},
 		token{Type: ttArrow, Lexeme: "->"},
@@ -28,7 +28,7 @@ func Test_parse(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "x[0..0] -> x",
+			name: "x[0:0] -> x",
 			input: makeFunction("x", 0, 0, []token{
 				token{Type: ttIdent, Lexeme: "x"},
 			}),
@@ -40,13 +40,13 @@ func Test_parse(t *testing.T) {
 			},
 		},
 		{
-			name: "x[-100..5*2] -> x",
+			name: "x[-100:5*2] -> x",
 			input: []token{
 				token{Type: ttIdent, Lexeme: "x"},
 				token{Type: ttLBracket, Lexeme: "["},
 				token{Type: ttMinus, Lexeme: "-"},
 				token{Type: ttNumber, Lexeme: "100"},
-				token{Type: ttDotDot, Lexeme: ".."},
+				token{Type: ttColon, Lexeme: ":"},
 				token{Type: ttNumber, Lexeme: "5"},
 				token{Type: ttStar, Lexeme: "*"},
 				token{Type: ttNumber, Lexeme: "2"},
@@ -62,7 +62,7 @@ func Test_parse(t *testing.T) {
 			},
 		},
 		{
-			name: "y[1..100] -> y + 1",
+			name: "y[1:100] -> y + 1",
 			input: makeFunction("y", 1, 100, []token{
 				token{Type: ttIdent, Lexeme: "y"},
 				token{Type: ttPlus, Lexeme: "+"},
@@ -76,7 +76,7 @@ func Test_parse(t *testing.T) {
 			},
 		},
 		{
-			name: "x[1..100] -> x * (x - 1) + x^2 / sin -x",
+			name: "x[1:100] -> x * (x - 1) + x^2 / sin -x",
 			input: makeFunction("x", 1, 100, []token{
 				token{Type: ttIdent, Lexeme: "x"},
 				token{Type: ttStar, Lexeme: "*"},
