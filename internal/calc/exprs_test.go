@@ -46,6 +46,24 @@ func Test_Expr_Eval(t *testing.T) {
 			want: 250,
 		},
 		{
+			name: "powerExpr",
+			expr: powerExpr{numberExpr{number: 2}, numberExpr{number: 10}},
+			ctx:  contextWith("_", 0),
+			want: 1024,
+		},
+		{
+			name: "logExpr",
+			expr: logExpr{numberExpr{number: 4}, numberExpr{number: 16}},
+			ctx:  contextWith("_", 0),
+			want: 2,
+		},
+		{
+			name: "lognExpr",
+			expr: logExpr{numberExpr{number: math.E}, numberExpr{number: Number(math.Pow(math.E, 10))}},
+			ctx:  contextWith("_", 0),
+			want: 10,
+		},
+		{
 			name: "sqrtExpr",
 			expr: sqrtExpr{inner: identExpr{ident: "x"}},
 			ctx:  contextWith("x", 25),
