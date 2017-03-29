@@ -48,7 +48,9 @@ func (x powerExpr) Eval(ctx EvalContext) Number {
 type logExpr binaryExpr
 
 func (x logExpr) Eval(ctx EvalContext) Number {
-	panic("unimplemented")
+	base := float64(x.left.Eval(ctx))
+	num := float64(x.right.Eval(ctx))
+	return Number(math.Log(num) / math.Log(base))
 }
 
 type unaryExpr struct {
