@@ -21,13 +21,13 @@ func Test_Expr_Eval(t *testing.T) {
 		{
 			name: "numberExpr",
 			expr: numberExpr{number: 100},
-			ctx:  contextWith("_", 0),
+			ctx:  newContext(),
 			want: 100,
 		},
 		{
 			name: "addExpr",
 			expr: addExpr{numberExpr{number: 100}, numberExpr{number: 150}},
-			ctx:  contextWith("_", 0),
+			ctx:  newContext(),
 			want: 250,
 		},
 		{
@@ -48,19 +48,19 @@ func Test_Expr_Eval(t *testing.T) {
 		{
 			name: "powerExpr",
 			expr: powerExpr{numberExpr{number: 2}, numberExpr{number: 10}},
-			ctx:  contextWith("_", 0),
+			ctx:  newContext(),
 			want: 1024,
 		},
 		{
 			name: "logExpr",
 			expr: logExpr{numberExpr{number: 4}, numberExpr{number: 16}},
-			ctx:  contextWith("_", 0),
+			ctx:  newContext(),
 			want: 2,
 		},
 		{
 			name: "lognExpr",
 			expr: logExpr{numberExpr{number: math.E}, numberExpr{number: Number(math.Pow(math.E, 10))}},
-			ctx:  contextWith("_", 0),
+			ctx:  newContext(),
 			want: 10,
 		},
 		{
