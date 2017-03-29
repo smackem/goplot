@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"html/template"
 	"image"
 	"image/png"
 	"io"
 	"net/http"
+	"path"
+	"path/filepath"
 )
 
 type Responder interface {
@@ -133,8 +136,33 @@ func (r errorResponder) Respond(writer io.Writer) error {
 }
 
 func (r errorResponder) ContentType() string {
-	return "text/plain"
+	return "text/plain; charset=utf-8"
 }
 
-// func View(path string) Responder {
-// }
+func View(path string, model interface{}) Responder {
+	return &viewResponder{path, model}
+}
+
+type viewResponder struct {
+	path  string
+	model interface{}
+}
+
+var templateMap = make(map[string]*template.Template)
+
+func (r viewResponder) Respond(writer io.Writer) error {
+	templ, ok := templateMap[r.path]
+	if !ok {
+		templ, err := template.ParseFiles(filepath.FromSlash(r.path))
+		if err != nil {
+			return err
+		}
+		templateMap[r.path] = templ
+	}
+	_, file := path.Split(r.path)
+	return templ.ExecuteTemplate(writer, file, r.model)
+}
+
+func (r viewResponder) ContentType() string {
+	return "text/html; charset=utf-8"
+}
