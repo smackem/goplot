@@ -61,7 +61,7 @@ func (x *Exchange) MustGetInt(key string) int {
 	log.Printf("%s: %s -> int", key, s)
 	val, err := strconv.Atoi(s)
 	if err != nil {
-		x.doPanic(fmt.Sprintf("Value %s not present or not an integer", key))
+		x.doPanic(fmt.Sprintf("value %s not present or not an integer", key))
 	}
 	return val
 }
@@ -83,7 +83,7 @@ func (x *Exchange) MustGetString(key string) string {
 	s := x.r.FormValue(key)
 	log.Printf("%s: %s -> string", key, s)
 	if s == "" {
-		x.doPanic(fmt.Sprintf("Value %s not present", key))
+		x.doPanic(fmt.Sprintf("value %s not present", key))
 	}
 	return s
 }
@@ -107,7 +107,7 @@ func (x *Exchange) MustGetFloat(key string) float64 {
 	log.Printf("%s: %s -> float", key, s)
 	val, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		x.doPanic(fmt.Sprintf("Value %s not present or not a float", key))
+		x.doPanic(fmt.Sprintf("value %s not present or not a float", key))
 	}
 	return val
 }
@@ -131,7 +131,7 @@ func (x *Exchange) MustGetBool(key string) bool {
 	log.Printf("%s: %s -> bool", key, s)
 	val, err := strconv.ParseBool(s)
 	if err != nil {
-		x.doPanic(fmt.Sprintf("Value %s not present or not a boolean", key))
+		x.doPanic(fmt.Sprintf("value %s not present or not a boolean", key))
 	}
 	return val
 }

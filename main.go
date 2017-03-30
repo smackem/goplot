@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 const (
@@ -18,10 +17,7 @@ func main() {
 
 	closeChannel := make(chan error)
 	srv := http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		Addr: fmt.Sprintf(":%d", port),
 	}
 
 	go func() {
