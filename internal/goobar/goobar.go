@@ -11,6 +11,19 @@ func RegisterAction(pattern string, action Action) {
 	http.HandleFunc(pattern, makeHandler(action))
 }
 
+func RegisterFileServer(pattern string, rootPath string) {
+	fileRootPath = rootPath
+	handler := http.FileServer(http.Dir(rootPath))
+	http.Handle(pattern, handler)
+}
+
+func RegisterViewPath(path string) {
+	viewPath = path
+}
+
+var fileRootPath string
+var viewPath string
+
 func makeHandler(action Action) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer recoverFromActionPanic(w, r)

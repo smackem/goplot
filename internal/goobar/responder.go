@@ -153,7 +153,8 @@ var templateMap = make(map[string]*template.Template)
 func (r viewResponder) Respond(writer io.Writer) error {
 	templ, ok := templateMap[r.path]
 	if !ok {
-		templ, err := template.ParseFiles(filepath.FromSlash(r.path))
+		filePath := path.Join(viewPath, r.path)
+		templ, err := template.ParseFiles(filepath.FromSlash(filePath))
 		if err != nil {
 			return err
 		}

@@ -14,6 +14,8 @@ func registerAPI() {
 	goobar.RegisterAction("/eval", evalAction)
 	goobar.RegisterAction("/draw", drawAction)
 	goobar.RegisterAction("/plot", plotAction)
+	goobar.RegisterFileServer("/public/", "resource/public")
+	goobar.RegisterViewPath("resource/view")
 }
 
 func rootAction(x goobar.Exchange) goobar.Responder {
