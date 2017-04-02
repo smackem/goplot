@@ -17,7 +17,7 @@ func RegisterFileServer(pattern string, rootPath string) {
 	http.Handle(pattern, handler)
 }
 
-func RegisterViewPath(path string) {
+func SetViewPath(path string) {
 	viewPath = path
 }
 

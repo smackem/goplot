@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
+	"sync"
 )
 
 type Responder interface {
@@ -148,17 +149,37 @@ type viewResponder struct {
 	model interface{}
 }
 
-var templateMap = make(map[string]*template.Template)
+type templateCache struct {
+	m     map[string]*template.Template
+	mutex sync.Locker
+}
+
+var cache = templateCache{
+	m:     make(map[string]*template.Template),
+	mutex: new(sync.Mutex),
+}
+
+func (t *templateCache) getOrAdd(name string, f func() (*template.Template, error)) (*template.Template, error) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	templ, ok := t.m[name]
+	if !ok {
+		templ, err := f()
+		if err != nil {
+			return nil, err
+		}
+		t.m[name] = templ
+	}
+	return templ, nil
+}
 
 func (r viewResponder) Respond(writer io.Writer) error {
-	templ, ok := templateMap[r.path]
-	if !ok {
+	templ, err := cache.getOrAdd(r.path, func() (*template.Template, error) {
 		filePath := path.Join(viewPath, r.path)
-		templ, err := template.ParseFiles(filepath.FromSlash(filePath))
-		if err != nil {
-			return err
-		}
-		templateMap[r.path] = templ
+		return template.ParseFiles(filepath.FromSlash(filePath))
+	})
+	if err != nil {
+		return err
 	}
 	_, file := path.Split(r.path)
 	return templ.ExecuteTemplate(writer, file, r.model)

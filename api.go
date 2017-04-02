@@ -10,12 +10,13 @@ import (
 )
 
 func registerAPI() {
+	goobar.SetViewPath("resource/view")
+	goobar.RegisterFileServer("/public/", "resource")
 	goobar.RegisterAction("/", rootAction)
 	goobar.RegisterAction("/eval", evalAction)
 	goobar.RegisterAction("/draw", drawAction)
 	goobar.RegisterAction("/plot", plotAction)
-	goobar.RegisterFileServer("/public/", "resource")
-	goobar.RegisterViewPath("resource/view")
+	goobar.RegisterAction("/index", indexAction)
 }
 
 func rootAction(x goobar.Exchange) goobar.Responder {
@@ -59,4 +60,8 @@ func evalAction(x goobar.Exchange) goobar.Responder {
 		Xs []calc.Number
 		Ys []calc.Number
 	}{xs, ys})
+}
+
+func indexAction(x goobar.Exchange) goobar.Responder {
+	return goobar.View("index.html", struct{ Message string }{"Hello"})
 }
