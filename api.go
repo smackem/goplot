@@ -10,7 +10,7 @@ import (
 )
 
 func registerAPI() {
-	goobar.SetViewPath("resource/view")
+	goobar.SetViewDir("resource/view")
 	goobar.RegisterFileServer("/public/", "resource")
 	goobar.RegisterAction("/", rootAction)
 	goobar.RegisterAction("/eval", evalAction)

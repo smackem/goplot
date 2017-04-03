@@ -11,18 +11,18 @@ func RegisterAction(pattern string, action Action) {
 	http.HandleFunc(pattern, makeHandler(action))
 }
 
-func RegisterFileServer(pattern string, rootPath string) {
-	fileRootPath = rootPath
-	handler := http.FileServer(http.Dir(rootPath))
+func RegisterFileServer(pattern string, rootDir string) {
+	fileRootDir = rootDir
+	handler := http.FileServer(http.Dir(rootDir))
 	http.Handle(pattern, handler)
 }
 
-func SetViewPath(path string) {
-	viewPath = path
+func SetViewDir(location string) {
+	viewDir = location
 }
 
-var fileRootPath string
-var viewPath string
+var fileRootDir string
+var viewDir string
 
 func makeHandler(action Action) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

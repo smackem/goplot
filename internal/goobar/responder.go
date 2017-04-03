@@ -37,15 +37,13 @@ func (r jsonResponder) ContentType() string {
 }
 
 func PlainText(text string) Responder {
-	return &plainTextResponder{text}
+	return plainTextResponder(text)
 }
 
-type plainTextResponder struct {
-	text string
-}
+type plainTextResponder string
 
 func (r plainTextResponder) Respond(writer io.Writer) error {
-	_, err := io.WriteString(writer, r.text)
+	_, err := io.WriteString(writer, string(r))
 	return err
 }
 
@@ -149,35 +147,32 @@ type viewResponder struct {
 	model interface{}
 }
 
-type templateCache struct {
-	m     map[string]*template.Template
-	mutex sync.Locker
+var templateCache = struct {
+	sync.Locker
+	items map[string]*template.Template
+}{
+	new(sync.Mutex),
+	make(map[string]*template.Template),
 }
 
-var cache = templateCache{
-	m:     make(map[string]*template.Template),
-	mutex: new(sync.Mutex),
-}
-
-func (t *templateCache) getOrAdd(name string, f func() (*template.Template, error)) (*template.Template, error) {
-	t.mutex.Lock()
-	defer t.mutex.Unlock()
-	templ, ok := t.m[name]
+func getTemplate(name string) (*template.Template, error) {
+	templateCache.Lock()
+	defer templateCache.Unlock()
+	templ, ok := templateCache.items[name]
 	if !ok {
-		templ, err := f()
+		var err error
+		filePath := path.Join(viewDir, name)
+		templ, err = template.ParseFiles(filepath.FromSlash(filePath))
 		if err != nil {
 			return nil, err
 		}
-		t.m[name] = templ
+		templateCache.items[name] = templ
 	}
 	return templ, nil
 }
 
 func (r viewResponder) Respond(writer io.Writer) error {
-	templ, err := cache.getOrAdd(r.path, func() (*template.Template, error) {
-		filePath := path.Join(viewPath, r.path)
-		return template.ParseFiles(filepath.FromSlash(filePath))
-	})
+	templ, err := getTemplate(r.path)
 	if err != nil {
 		return err
 	}
