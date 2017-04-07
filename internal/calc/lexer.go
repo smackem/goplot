@@ -54,7 +54,7 @@ func (t token) parseNumber() Number {
 		}
 	}
 
-	panic(fmt.Sprintf("Error converting %s to number", t.Lexeme))
+	panic(fmt.Sprintf("error converting %s to number", t.Lexeme))
 }
 
 // lex walks the specified string and returns an array of lexed Tokens

@@ -4,14 +4,11 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"html/template"
 	"image"
 	"image/png"
 	"io"
+	"log"
 	"net/http"
-	"path"
-	"path/filepath"
-	"sync"
 )
 
 type Responder interface {
@@ -147,37 +144,13 @@ type viewResponder struct {
 	model interface{}
 }
 
-var templateCache = struct {
-	sync.Locker
-	items map[string]*template.Template
-}{
-	new(sync.Mutex),
-	make(map[string]*template.Template),
-}
-
-func getTemplate(name string) (*template.Template, error) {
-	templateCache.Lock()
-	defer templateCache.Unlock()
-	templ, ok := templateCache.items[name]
-	if !ok {
-		var err error
-		filePath := path.Join(viewDir, name)
-		templ, err = template.ParseFiles(filepath.FromSlash(filePath))
-		if err != nil {
-			return nil, err
-		}
-		templateCache.items[name] = templ
-	}
-	return templ, nil
-}
-
 func (r viewResponder) Respond(writer io.Writer) error {
-	templ, err := getTemplate(r.path)
+	templ, name, err := getTemplate(r.path)
 	if err != nil {
+		log.Print(err)
 		return err
 	}
-	_, file := path.Split(r.path)
-	return templ.ExecuteTemplate(writer, file, r.model)
+	return templ.ExecuteTemplate(writer, name, r.model)
 }
 
 func (r viewResponder) ContentType() string {
