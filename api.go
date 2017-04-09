@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
+	"net/http"
 
 	"github.com/smackem/goplot/internal/calc"
 	"github.com/smackem/goplot/internal/goobar"
@@ -10,16 +11,18 @@ import (
 )
 
 func registerAPI() {
-	goobar.SetViewDir("resource/view")
-	goobar.RegisterFileServer("/public/", "resource")
-	goobar.RegisterAction("/", rootAction)
-	goobar.RegisterAction("/eval", evalAction)
-	goobar.RegisterAction("/draw", drawAction)
-	goobar.RegisterAction("/plot", plotAction)
-	goobar.RegisterAction("/index", indexAction)
+	http.Handle("/public/", http.FileServer(http.Dir("resource")))
+	http.Handle("/", goobar.Get(getRoot))
+	http.Handle("/eval", goobar.Get(getEval))
+	http.Handle("/draw", goobar.Get(getDraw))
+	http.Handle("/plot", goobar.Get(getPlot))
+	http.Handle("/index", goobar.Get(getIndex))
+	http.Handle("/sub", goobar.Get(func(x goobar.Exchange) goobar.Responder {
+		return goobar.View("sub/subfile.html", nil)
+	}))
 }
 
-func rootAction(x goobar.Exchange) goobar.Responder {
+func getRoot(x goobar.Exchange) goobar.Responder {
 	text := fmt.Sprintf("Got '%d'!\n", x.MustGetID())
 	return goobar.XML(struct {
 		XMLName xml.Name `xml:"v"`
@@ -29,11 +32,11 @@ func rootAction(x goobar.Exchange) goobar.Responder {
 	//return goobar.PlainText(text)
 }
 
-func drawAction(x goobar.Exchange) goobar.Responder {
+func getDraw(x goobar.Exchange) goobar.Responder {
 	return goobar.ImagePNG(graph.DrawPng())
 }
 
-func plotAction(x goobar.Exchange) goobar.Responder {
+func getPlot(x goobar.Exchange) goobar.Responder {
 	fsrc := x.MustGetString("f")
 	f, err := calc.Parse(fsrc)
 	if err != nil {
@@ -47,7 +50,7 @@ func plotAction(x goobar.Exchange) goobar.Responder {
 	return goobar.ImagePNG(graph.PlotPng(xs, ys, minY, maxY))
 }
 
-func evalAction(x goobar.Exchange) goobar.Responder {
+func getEval(x goobar.Exchange) goobar.Responder {
 	fsrc := x.MustGetString("f")
 	f, err := calc.Parse(fsrc)
 	if err != nil {
@@ -62,6 +65,6 @@ func evalAction(x goobar.Exchange) goobar.Responder {
 	}{xs, ys})
 }
 
-func indexAction(x goobar.Exchange) goobar.Responder {
+func getIndex(x goobar.Exchange) goobar.Responder {
 	return goobar.View("index.html", struct{ Message string }{"Hello"})
 }
