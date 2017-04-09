@@ -1,9 +1,22 @@
 <html>
-    <title>goplot</title>
+    <head>
+        <title>goplot</title>
+        <script type="text/javascript" src="/public/script/jquery-3.2.0-min.js"></script>
+    </head>
     <body>
         <div>{{.Message}}</div>
-        <div><img src="/public/img.png" width="50%" height="50%" /></div>
-        <p>Hallo Sackratte!</p>
+        <div><img id="graph" src="/public/img.png" width="50%" height="50%" /></div>
         <p>{{template "inline.html"}}</p>
+        <div>
+            <input type="text" id="func" width="40" />
+            <input type="button" onclick="oncalc()" />
+        </div>
+        <script>
+            function oncalc() {
+                var func = document.getElementById("func").textContent;
+                var img = document.getElementById("graph")
+                img.src = "/plot/?f=" + encodeURI(func);
+            }
+        </script>
     </body>
 </html>
