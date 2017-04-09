@@ -1,21 +1,22 @@
 <html>
     <head>
         <title>goplot</title>
-        <script type="text/javascript" src="/public/script/jquery-3.2.0-min.js"></script>
+        <script src="/public/script/jquery-3.2.0.min.js"></script>
     </head>
     <body>
-        <div>{{.Message}}</div>
-        <div><img id="graph" src="/public/img.png" width="50%" height="50%" /></div>
-        <p>{{template "inline.html"}}</p>
+        <div><img id="graph" src="/public/img.png" /></div>
         <div>
             <input type="text" id="func" width="40" />
-            <input type="button" onclick="oncalc()" />
+            <input type="button" onclick="oncalc()" value="Plot!" />
         </div>
+        <div>{{.Message}}</div>
+        <p>{{template "inline.html"}}</p>
         <script>
             function oncalc() {
-                var func = document.getElementById("func").textContent;
-                var img = document.getElementById("graph")
-                img.src = "/plot/?f=" + encodeURI(func);
+                var func = $('#func').val();
+                $('#graph').attr({
+                    src: "/plot?f=" + encodeURI(func)
+                });
             }
         </script>
     </body>

@@ -42,7 +42,7 @@ func getPlot(x goobar.Exchange) goobar.Responder {
 	if err != nil {
 		return goobar.Error(400, err.Error())
 	}
-	steps := x.GetIntOrDefault("steps", 10)
+	steps := x.GetIntOrDefault("steps", 100)
 	minY := x.GetFloatOrDefault("miny", 0)
 	maxY := x.GetFloatOrDefault("maxy", 0)
 
