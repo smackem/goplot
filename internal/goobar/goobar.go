@@ -7,60 +7,43 @@ import "net/url"
 import "path/filepath"
 
 type Handler struct {
-	Get     Action
-	Post    Action
-	Put     Action
-	Delete  Action
-	Options Action
+	Get, Post, Put, Delete, Options Action
 }
 
 type Action func(x Exchange) Responder
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer recoverFromActionPanic(w, r)
-	x := makeExchange(w, r)
-	var responder Responder
 
-	switch r.Method {
-	case "GET":
-		if h.Get == nil {
-			http.NotFound(w, r)
-			return
-		}
-		responder = h.Get(x)
-	case "POST":
-		if h.Post == nil {
-			http.NotFound(w, r)
-			return
-		}
-		responder = h.Post(x)
-	case "PUT":
-		if h.Put == nil {
-			http.NotFound(w, r)
-			return
-		}
-		responder = h.Put(x)
-	case "DELETE":
-		if h.Delete == nil {
-			http.NotFound(w, r)
-			return
-		}
-		responder = h.Delete(x)
-	case "OPTIONS":
-		if h.Options == nil {
-			http.NotFound(w, r)
-			return
-		}
-		responder = h.Options(x)
-	default:
+	action := h.getAction(r.Method)
+	if action == nil {
 		http.NotFound(w, r)
 		return
 	}
 
+	x := makeExchange(w, r)
+	responder := action(x)
 	if ct := responder.ContentType(); len(strings.TrimSpace(ct)) > 0 {
 		w.Header().Set("Content-Type", ct)
 	}
 	responder.Respond(w)
+}
+
+func (h *Handler) getAction(method string) Action {
+	switch method {
+	case "GET":
+		return h.Get
+	case "POST":
+		return h.Post
+	case "PUT":
+		return h.Put
+	case "DELETE":
+		return h.Delete
+	case "OPTIONS":
+		return h.Options
+	default:
+		return nil
+	}
 }
 
 func Get(action Action) *Handler {
@@ -93,7 +76,7 @@ func SetViewFolder(folder string) {
 	viewFolder = filepath.Clean(folder)
 }
 
-func GetViewFolder() string {
+func ViewFolder() string {
 	return viewFolder
 }
 

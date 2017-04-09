@@ -18,6 +18,10 @@ func (x Exchange) Request() *http.Request {
 	return x.r
 }
 
+func (x Exchange) Writer() http.ResponseWriter {
+	return x.w
+}
+
 func (x *Exchange) GetID() (int, bool) {
 	log.Printf("ID: %s -> int", x.id)
 	id, err := strconv.Atoi(x.id)

@@ -25,7 +25,6 @@ type jsonResponder struct {
 }
 
 func (r jsonResponder) Respond(writer io.Writer) error {
-	//http.Handle("", http.FileServer(http.Dir("")))
 	return json.NewEncoder(writer).Encode(r.value)
 }
 
