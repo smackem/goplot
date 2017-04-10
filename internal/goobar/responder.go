@@ -8,7 +8,9 @@ import (
 	"image/png"
 	"io"
 	"log"
+	"mime"
 	"net/http"
+	"path"
 )
 
 type Responder interface {
@@ -153,5 +155,5 @@ func (r viewResponder) Respond(writer io.Writer) error {
 }
 
 func (r viewResponder) ContentType() string {
-	return "text/html; charset=utf-8"
+	return mime.TypeByExtension(path.Ext(r.path))
 }
