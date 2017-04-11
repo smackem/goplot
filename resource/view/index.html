@@ -16,7 +16,7 @@
             function oncalc() {
                 var func = $('#func').val();
                 $('#graph').attr({
-                    src: "/plot?steps=400&f=" + encodeURI(func)
+                    src: "/plot?steps=400&f=" + encodeURIComponent(func)
                 });
             }
 

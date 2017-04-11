@@ -10,7 +10,7 @@ type Handler struct {
 	Get, Post, Put, Delete, Options Action
 }
 
-type Action func(x Exchange) Responder
+type Action func(x *Exchange) Responder
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer recoverFromActionPanic(w, r)

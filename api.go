@@ -17,12 +17,12 @@ func registerAPI() {
 	http.Handle("/draw", goobar.Get(getDraw))
 	http.Handle("/plot", goobar.Get(getPlot))
 	http.Handle("/index", goobar.Get(getIndex))
-	http.Handle("/sub", goobar.Get(func(x goobar.Exchange) goobar.Responder {
+	http.Handle("/sub", goobar.Get(func(x *goobar.Exchange) goobar.Responder {
 		return goobar.View("sub/subfile.html", nil)
 	}))
 }
 
-func getRoot(x goobar.Exchange) goobar.Responder {
+func getRoot(x *goobar.Exchange) goobar.Responder {
 	text := fmt.Sprintf("Got '%d'!\n", x.MustGetID())
 	return goobar.XML(struct {
 		XMLName xml.Name `xml:"v"`
@@ -32,11 +32,11 @@ func getRoot(x goobar.Exchange) goobar.Responder {
 	//return goobar.PlainText(text)
 }
 
-func getDraw(x goobar.Exchange) goobar.Responder {
+func getDraw(x *goobar.Exchange) goobar.Responder {
 	return goobar.ImagePNG(graph.DrawPng())
 }
 
-func getPlot(x goobar.Exchange) goobar.Responder {
+func getPlot(x *goobar.Exchange) goobar.Responder {
 	fsrc := x.MustGetString("f")
 	f, err := calc.Parse(fsrc)
 	if err != nil {
@@ -50,7 +50,7 @@ func getPlot(x goobar.Exchange) goobar.Responder {
 	return goobar.ImagePNG(graph.PlotPng(xs, ys, minY, maxY))
 }
 
-func getEval(x goobar.Exchange) goobar.Responder {
+func getEval(x *goobar.Exchange) goobar.Responder {
 	fsrc := x.MustGetString("f")
 	f, err := calc.Parse(fsrc)
 	if err != nil {
@@ -65,6 +65,6 @@ func getEval(x goobar.Exchange) goobar.Responder {
 	}{xs, ys})
 }
 
-func getIndex(x goobar.Exchange) goobar.Responder {
+func getIndex(x *goobar.Exchange) goobar.Responder {
 	return goobar.View("index.html", struct{ Message string }{"Hello"})
 }

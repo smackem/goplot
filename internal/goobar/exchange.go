@@ -14,11 +14,11 @@ type Exchange struct {
 	id string
 }
 
-func (x Exchange) Request() *http.Request {
+func (x *Exchange) Request() *http.Request {
 	return x.r
 }
 
-func (x Exchange) Writer() http.ResponseWriter {
+func (x *Exchange) Writer() http.ResponseWriter {
 	return x.w
 }
 
@@ -157,10 +157,10 @@ func (x *Exchange) doPanic(msg string) {
 	panic(actionPanic{msg})
 }
 
-func makeExchange(w http.ResponseWriter, r *http.Request) Exchange {
+func makeExchange(w http.ResponseWriter, r *http.Request) *Exchange {
 	_, id := path.Split(r.URL.Path)
 
-	return Exchange{
+	return &Exchange{
 		w:  w,
 		r:  r,
 		id: id,
