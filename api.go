@@ -66,5 +66,8 @@ func getEval(x *goobar.Exchange) goobar.Responder {
 }
 
 func getIndex(x *goobar.Exchange) goobar.Responder {
-	return goobar.View("index.html", struct{ Message string }{"Hello"})
+	return goobar.View("index.html", struct {
+		Message string
+		Link    string
+	}{"Hello", "/draw"})
 }

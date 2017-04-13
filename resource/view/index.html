@@ -9,6 +9,7 @@
             <input type="text" id="func" width="40" />
             <input type="button" id="plot_button" value="Plot!" />
         </div>
+        <a href='{{.Link}}'>Link</a>
         <div>{{.Message}}</div>
         <p>{{template "inline.html"}}</p>
 
@@ -22,7 +23,7 @@
 
             $(document).ready(function() {
                 $('#plot_button').click(oncalc)
-                $("#func").keyup(function(e) {
+                $('#func').keyup(function(e) {
                     if (e.keyCode == 13) {
                         oncalc();
                     }
