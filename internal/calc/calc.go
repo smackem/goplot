@@ -10,6 +10,7 @@ func Parse(src string) (*Function, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return parse(tokens)
 }
 

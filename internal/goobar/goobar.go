@@ -1,15 +1,21 @@
 package goobar
 
-import "net/http"
-import "log"
-import "strings"
-import "net/url"
-import "path/filepath"
+import (
+	"log"
+	"net/http"
+	"net/url"
+	"path/filepath"
+	"strings"
+)
 
+// Handler stores a record of functions that handle different HTTP methods
+// invoked for a common path. It stores Actions for GET, POST, PUT, DELETE
+// and OPTIONS.
 type Handler struct {
 	Get, Post, Put, Delete, Options Action
 }
 
+// Action is a function that handles an HTTP request.
 type Action func(x *Exchange) Responder
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -46,22 +52,28 @@ func (h *Handler) getAction(method string) Action {
 	}
 }
 
+// Get returns a Handler with only one action for the HTTP method GET.
 func Get(action Action) *Handler {
 	return &Handler{Get: action}
 }
 
+// Post returns a Handler with only one action for the HTTP method Post.
 func Post(action Action) *Handler {
 	return &Handler{Post: action}
 }
 
+// Put returns a Handler with only one action for the HTTP method PUT.
 func Put(action Action) *Handler {
 	return &Handler{Put: action}
 }
 
+// Delete returns a Handler with only one action for the HTTP method DELETE.
 func Delete(action Action) *Handler {
 	return &Handler{Delete: action}
 }
 
+// AnyMethod returns a Handler with only one action for all supported HTTP actions
+// (GET, POST, PUT, DELETE, OPTIONS)
 func AnyMethod(action Action) *Handler {
 	return &Handler{
 		Get:     action,
@@ -72,10 +84,14 @@ func AnyMethod(action Action) *Handler {
 	}
 }
 
+// SetViewFolder sets the file path of the local directory that contains
+// the view templates.
 func SetViewFolder(folder string) {
 	viewFolder = filepath.Clean(folder)
 }
 
+// ViewFolder returns the file path of the local directory that contains
+// the view templates.
 func ViewFolder() string {
 	return viewFolder
 }
