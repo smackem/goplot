@@ -1,10 +1,33 @@
 <html>
     <head>
         <title>goplot SVG</title>
+        <script src="/pub/script/jquery-3.2.0.min.js"></script>
     </head>
     <body>
-        <object type="image/svg+xml" data="/pub/test.svg" style="background: lightgray">
-            Your browser does not support SVG
-        </object>
+        <div>
+            <img id="graph" alt="Your browser does not support SVG" />
+        </div>
+        <div>
+            <input type="text" id="func" width="40" value="x[-10:10]->sin x + x * cos x" />
+            <input type="button" id="plot_button" value="Plot!" />
+        </div>
+
+        <script>
+            function oncalc() {
+                var func = $('#func').val();
+                $('#graph').attr({
+                    src: "/plot/svg?steps=400&f=" + encodeURIComponent(func) + "&ts=" + Date.now()
+                });
+            }
+
+            $(document).ready(function() {
+                $('#plot_button').click(oncalc)
+                $('#func').keyup(function(e) {
+                    if (e.keyCode == 13) {
+                        oncalc();
+                    }
+                });
+            })
+        </script>
     </body>
 </html>

@@ -21,6 +21,9 @@ type Action func(x *Exchange) Responder
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer recoverFromActionPanic(w, r)
 
+	u, _ := url.QueryUnescape(r.URL.String())
+	log.Printf("%s %s", r.Method, u)
+
 	action := h.getAction(r.Method)
 	if action == nil {
 		http.NotFound(w, r)

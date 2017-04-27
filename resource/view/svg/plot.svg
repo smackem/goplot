@@ -1,3 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="600px" viewBox="-5 -5 60 60">
-    <path d="M 0 0 L 25 50 L 50 0 Z" fill="blue" stroke="black" stroke-width="1" />
+<svg xmlns="http://www.w3.org/2000/svg" width="{{.Width}}px" height="{{.Height}}px" viewBox="0 0 {{.Width}} {{.Height}}">
+    <style>
+        polyline {
+            fill: none;
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+        line.axis {
+            stroke: #CCC;
+            stroke-width: 1.5px;
+        }
+    </style>
+    <line x1="{{.YAxisX}}" x2="{{.YAxisX}}" y1="0" y2="{{.Width}}" class="axis" />
+    <line x1="0" x2="{{.Width}}" y1="{{.XAxisY}}" y2="{{.XAxisY}}" class="axis" />
+    <polyline points="{{.Points}}" />
 </svg>
