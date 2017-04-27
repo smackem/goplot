@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/xml"
-	"fmt"
 	"net/http"
 
 	"github.com/smackem/goplot/internal/calc"
@@ -10,33 +8,19 @@ import (
 	"github.com/smackem/goplot/internal/graph"
 )
 
-func registerAPI() {
-	http.Handle("/public/", http.FileServer(http.Dir("resource")))
-	http.Handle("/", goobar.Get(getRoot))
-	http.Handle("/eval", goobar.Get(getEval))
-	http.Handle("/draw", goobar.Get(getDraw))
-	http.Handle("/plot", goobar.Get(getPlot))
-	http.Handle("/index", goobar.Get(getIndex))
-	http.Handle("/sub", goobar.Get(func(x *goobar.Exchange) goobar.Responder {
-		return goobar.View("sub/subfile.html", nil)
-	}))
+func registerHTTP() {
+	http.Handle("/api/eval", goobar.Get(getEval))
+
+	http.Handle("/plot/img", goobar.Get(getPlotImg))
+	http.Handle("/plot/svg", goobar.Get(getPlotImg))
+
+	http.Handle("/", goobar.Get(getIndex))
+	http.Handle("/svg", goobar.Get(getSvgIndex))
+
+	http.Handle("/pub/", http.FileServer(http.Dir("resource")))
 }
 
-func getRoot(x *goobar.Exchange) goobar.Responder {
-	text := fmt.Sprintf("Got '%d'!\n", x.MustGetID())
-	return goobar.XML(struct {
-		XMLName xml.Name `xml:"v"`
-		Msg     string
-		Number  int
-	}{Msg: text, Number: 123})
-	//return goobar.PlainText(text)
-}
-
-func getDraw(x *goobar.Exchange) goobar.Responder {
-	return goobar.ImagePNG(graph.DrawPng())
-}
-
-func getPlot(x *goobar.Exchange) goobar.Responder {
+func getPlotImg(x *goobar.Exchange) goobar.Responder {
 	fsrc := x.MustGetString("f")
 	f, err := calc.Parse(fsrc)
 	if err != nil {
@@ -70,4 +54,8 @@ func getIndex(x *goobar.Exchange) goobar.Responder {
 		Message string
 		Link    string
 	}{"Hello", "/draw"})
+}
+
+func getSvgIndex(x *goobar.Exchange) goobar.Responder {
+	return goobar.View("svg/index.html", nil)
 }

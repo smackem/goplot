@@ -21,16 +21,16 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
-	if len(args) < 2 {
-		fmt.Printf("Usage:\n%s [OPTIONS] HOSTNAME:PORT FUNCTION\nOPTIONS:\n", os.Args[0])
+	if len(args) < 3 {
+		fmt.Printf("Usage:\n%s [OPTIONS] HOSTNAME:PORT/PATH FUNCTION\nOPTIONS:\n", os.Args[0])
 		flag.PrintDefaults()
 		return
 	}
 
 	address := args[0]
-	fsrc := args[1]
+	fsrc := args[2]
 
-	uri := fmt.Sprintf("http://%s/plot?f=%s&steps=%d&miny=%g&maxy=%g", address, url.QueryEscape(fsrc), steps, minY, maxY)
+	uri := fmt.Sprintf("http://%s?f=%s&steps=%d&miny=%g&maxy=%g", address, url.QueryEscape(fsrc), steps, minY, maxY)
 	fmt.Fprintf(os.Stderr, "> GET %s\n", uri)
 
 	resp, err := http.Get(uri)

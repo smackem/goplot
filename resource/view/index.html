@@ -1,10 +1,10 @@
 <html>
     <head>
         <title>goplot</title>
-        <script src="/public/script/jquery-3.2.0.min.js"></script>
+        <script src="/pub/script/jquery-3.2.0.min.js"></script>
     </head>
     <body>
-        <div><img id="graph" src="/public/img.png" /></div>
+        <div><img id="graph" src="/pub/img.png" /></div>
         <div>
             <input type="text" id="func" width="40" />
             <input type="button" id="plot_button" value="Plot!" />
@@ -17,7 +17,7 @@
             function oncalc() {
                 var func = $('#func').val();
                 $('#graph').attr({
-                    src: "/plot?steps=400&f=" + encodeURIComponent(func)
+                    src: "/plot/img?steps=400&f=" + encodeURIComponent(func)
                 });
             }
 
