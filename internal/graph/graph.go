@@ -18,26 +18,6 @@ func init() {
 	draw2d.SetFontFolder(filepath.FromSlash("resource/font"))
 }
 
-func DrawPng() image.Image {
-	// Initialize the graphic context on an RGBA image
-	dest := image.NewRGBA(image.Rect(0, 0, 297, 210.0))
-	gc := draw2dimg.NewGraphicContext(dest)
-
-	// Set some properties
-	gc.SetFillColor(color.RGBA{0x44, 0xff, 0x44, 0xff})
-	gc.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
-	gc.SetLineWidth(5)
-
-	// Draw a closed shape
-	gc.MoveTo(10, 10) // should always be called first for a new path
-	gc.LineTo(100, 50)
-	gc.QuadCurveTo(100, 10, 10, 10)
-	gc.Close()
-	gc.FillStroke()
-
-	return dest
-}
-
 func PlotPng(xs []calc.Number, ys []calc.Number, minY, maxY float64) image.Image {
 	if len(xs) <= 0 || len(xs) != len(ys) {
 		panic("xs and ys must be of equal length, both greater than zero")
@@ -111,6 +91,49 @@ func PlotPng(xs []calc.Number, ys []calc.Number, minY, maxY float64) image.Image
 func fillRect(dest draw.Image, x, y, width, height float64, rgb color.Color) {
 	rect := image.Rect(int(x+0.5), int(y+0.5), int(x+width+0.5), int(y+height+0.5))
 	draw.Draw(dest, rect, image.NewUniform(rgb), image.ZP, draw.Over)
+}
+
+type TransformedGraph struct {
+	Width, Height  float64
+	XAxisY, YAxisX float64
+	Xs, Ys         []float64
+}
+
+func Transform(xs []calc.Number, ys []calc.Number, minY, maxY float64, width, height float64) TransformedGraph {
+	if len(xs) <= 0 || len(xs) != len(ys) {
+		panic("xs and ys must be of equal length, both greater than zero")
+	}
+	if minY == 0 && maxY == 0 {
+		minY, maxY = minMax(ys)
+	}
+	minX, maxX := float64(xs[0]), float64(xs[len(xs)-1])
+	ratioX := width / float64(maxX-minX)
+	ratioY := height / float64(maxY-minY)
+
+	log.Printf("Transform: x=%g:%g y=%g:%g ratio=%g,%g\n", minX, maxX, minY, maxY, ratioX, ratioY)
+
+	scaleX := func(x calc.Number) float64 {
+		return (float64(x) - minX) * ratioX
+	}
+	scaleY := func(y calc.Number) float64 {
+		return -(float64(y) - maxY) * ratioY
+	}
+
+	curve := TransformedGraph{
+		Width:  width,
+		Height: height,
+		XAxisY: scaleY(0),
+		YAxisX: scaleX(0),
+		Xs:     make([]float64, len(xs)),
+		Ys:     make([]float64, len(ys)),
+	}
+
+	for i := range xs {
+		curve.Xs[i] = scaleX(xs[i])
+		curve.Ys[i] = scaleY(ys[i])
+	}
+
+	return curve
 }
 
 func minMax(numbers []calc.Number) (min float64, max float64) {

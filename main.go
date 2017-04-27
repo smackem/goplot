@@ -11,7 +11,7 @@ const (
 )
 
 func main() {
-	registerAPI()
+	registerHTTP()
 
 	srv := http.Server{
 		Addr: fmt.Sprintf(":%d", port),
