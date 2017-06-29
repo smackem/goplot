@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.8
 ADD . /go/src/github.com/smackem/goplot
 WORKDIR /go/src/github.com/smackem/goplot
 RUN go get ./...
